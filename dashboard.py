@@ -22,6 +22,7 @@ resample = 'D'
 # path from location from wher eyou are running this file
 #file = "../../data/texts_demo_data.csv"
 file = "/Users/michael/Desktop/Stuffing/Python/Projects/TextsCalls/sms.csv"
+file = "data/texts_demo_data.csv"
 text_layout = text_messages(file, resample)
 call_layout = calls(resample)
 

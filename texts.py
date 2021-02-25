@@ -228,7 +228,10 @@ def text_message_plots(df, resample):
 
     line1.extra_y_ranges = {'cumulative': Range1d(
         start=0, end=texts_per_time.iloc[-1, -1] + 2000)}
-    line1.add_layout(LinearAxis(y_range_name='cumulative'), 'right')
+
+    cum_axis = LinearAxis(y_range_name='cumulative',
+                          axis_label='Cumulative number of texts')
+    line1.add_layout(cum_axis, 'right')
     line1.varea(x='Date', y2='Cum_Total', source=texts_per_time,  # area plot of total texts sent
                 color='blue', alpha=0.07, legend_label='Cumulative Total', y_range_name='cumulative')
     line1.legend.background_fill_alpha = 0.4
@@ -262,41 +265,30 @@ def text_message_plots(df, resample):
     # add column with angle of pie chart wedge
     total_texts['angle'] = total_texts['count'] / \
         total_texts['count'].sum() * 2 * pi
+    total_texts['percent'] = total_texts['count'] / \
+        total_texts['count'].sum() * 100
     total_texts['color'] = ['red', 'green']  # colors of wedges
-    total_texts['sender'] = [person1, person2]
-    total_texts['label_coords'] = [1.3, 0.6]  # y coordinates of wedge labels
-    label_text = [0, 0]
-    for i in range(len(label_text)):
-        label_text[i] = "{:.1f}%".format(
-            total_texts.iloc[i]['count'] / total_texts['count'].sum() * 100)
 
     # hover tool to display total texts sent by each person
-    hover_pie = HoverTool(tooltips=[('Texts sent', '@count')])
+    pie_tooltips = """
+        <div style="width:200px;">
+            <span style="color:#5DAED9">Texts sent: </span><span>@count (@percent%)</span>
+        </div>
+    """
+    hover_pie = HoverTool(
+        tooltips=pie_tooltips)
     # plot pie chart by creating a wedge for each sender
     pie = figure(plot_width=int(plot_width/3),
                  plot_height=plot_height, tools=[hover_pie])
     # create a wedge for each row in the total_texts dataframe
     pie.wedge(x=0, y=1, radius=0.8,
               start_angle=cumsum('angle', include_zero=True), end_angle=cumsum('angle'),
-              line_color='white', color='color', alpha=0.6, source=total_texts)
+              line_color='white', color='color', alpha=0.6, legend_field='index', source=total_texts)
     pie.axis.visible = False  # remove axes
     pie.grid.grid_line_color = None  # remove gridlines
     pie.title.text = 'Number of texts sent\n(Total of ' + \
         str(int(total_texts['count'].sum())) + ')'
-    # create the labels to display on each wedge, both at x coordinate=-0.1 and...
-    # ...y coordinate according to dataframe column value
-    labels = LabelSet(x=-0.1, y='label_coords', text='sender', source=ColumnDataSource(total_texts),
-                      render_mode='canvas')
-
-    # add percent labels to wedges
-    percent = Label(
-        x=-0.2, y=total_texts.iloc[0]['label_coords'] - 0.1, text=label_text[0])
-    pie.add_layout(percent)
-    percent = Label(
-        x=-0.2, y=total_texts.iloc[1]['label_coords'] - 0.1, text=label_text[1])
-    pie.add_layout(percent)
-
-    pie.add_layout(labels)  # add wedge labels to pie chart
+    pie.legend.background_fill_alpha = 0.4
 
     line1.x_range = line2.x_range  # link x axes of both line plots
 
@@ -325,6 +317,10 @@ def text_message_plots(df, resample):
         line1.yaxis.axis_label = 'Number of texts sent per ' + \
             resample_strings[0]
         line1.y_range.end = texts_per_time[person1].max() + 50
+        # change back the title of the right cumulative
+        cum_axis.axis_label = 'Cumulative number of texts'
+        # ... axis, since the above callback changes it back to be the same as the left
+
         avg_text_length_text = (person1 + ': ' + str(round(avg_words_person1, 1)) + ' words per text.\t\t\t\t\t\t\t' +
                                 person2 + ': ' + str(round(avg_words_person2, 1)) + ' words per text.')
         line2.title.text = avg_text_length_text

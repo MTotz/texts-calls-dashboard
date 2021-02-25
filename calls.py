@@ -18,8 +18,9 @@ from bokeh.transform import cumsum
 
 from texts import resample_interval_string
 
-person1 = "Mary"
-person2 = "John"
+person1 = "Mary"  # the name of the person who downloaded the call log
+person2 = "John"  # the name of your contact as it will appear in the dashboard
+person3 = "snooze monster"  # the name of person2 as listed in the call log
 
 
 def merge_dataframes():
@@ -30,6 +31,7 @@ def merge_dataframes():
     """
 
     path = '/Users/michael/Desktop/Stuffing/Python/Projects/TextsCalls/'
+    path = "data/"
 
     files = [f for f in listdir(path)]  # get files from folder
     xmls = [f for f in files if re.search('.xml', f)]  # get only xml files
@@ -68,7 +70,7 @@ def create_dataframe(file):
 
     # for each child in the xml file extract the relevant attributes
     for child in root:
-        if child.get('contact_name') == 'snooze monster':
+        if child.get('contact_name') == person3:
             number.append(child.get('number'))
             date.append(child.get('readable_date'))
             duration.append(child.get('duration'))
@@ -169,8 +171,8 @@ def plot_calls(df_merged, resample):
                    y_axis_label='Average call duration per ' + \
                    resample_strings[0] + ' (minutes)',
                    tools=['pan,box_zoom,reset'], plot_width=plot_width, plot_height=plot_height)
-    line2.line('Date', 'Duration (m)', source=source2, color='brown', alpha=0.6, line_width=2,
-               legend_label='Average call duration (minutes)')
+    call_duration_glyph = line2.line('Date', 'Duration (m)', source=source2, color='brown', alpha=0.6, line_width=2,
+                                     legend_label='Average call duration (minutes)')
     line2.y_range = Range1d(start=0, end=df_mean['Duration (m)'].max() + 5)
     # add separate y axis to plot cumulative total
     line2.extra_y_ranges = {'cumulative': Range1d(
@@ -182,6 +184,9 @@ def plot_calls(df_merged, resample):
                 color='blue', alpha=0.07, legend_label='Cumulative call time (hours)', y_range_name='cumulative')
     line2.title.text = 'Average of ' + average_duration + ' minutes per call'
     line2.legend.background_fill_alpha = 0.4
+    hover_line2 = HoverTool(
+        tooltips=[('Date', '@Date{%F}')], formatters={'@Date': 'datetime'}, renderers=[call_duration_glyph], mode="vline")
+    line2.add_tools(hover_line2)
 
     line1.x_range = line2.x_range
 
@@ -192,43 +197,29 @@ def plot_calls(df_merged, resample):
     # add column with angle of pie chart wedge
     calls_made['angle'] = calls_made['count'] / \
         calls_made['count'].sum() * 2 * pi
+    calls_made['percent'] = calls_made['count'] / \
+        calls_made['count'].sum() * 100
     calls_made['color'] = ['red', 'green', 'blue']  # colors of wedges
-    # y coordinates of wedge labels
-    calls_made['label_coords_y'] = [1.3, 0.6, 0.88]
-    # x coordinates of wedge labels
-    calls_made['label_coords_x'] = [-0.1, -0.1, 0.32]
-    label_text = [0, 0, 0]
-    for i in range(len(label_text)):
-        label_text[i] = "{:.1f}%".format(
-            calls_made.iloc[i]['count'] / calls_made['count'].sum() * 100)
 
     # plot pie chart by creating a wedge for each sender
-    hover_pie = HoverTool(tooltips=[('Calls made', '@count')])
+    pie_tooltips = """
+        <div style="width:200px;">
+            <span style="color:#5DAED9">Calls made: </span><span>@count (@percent%)</span>
+        </div>
+    """
+    hover_pie = HoverTool(
+        tooltips=pie_tooltips)
     pie = figure(plot_width=int(plot_width/3),
                  plot_height=plot_height, tools=[hover_pie])
     # create a wedge for each row in the total_texts dataframe
     pie.wedge(x=0, y=1, radius=0.8,
               start_angle=cumsum('angle', include_zero=True), end_angle=cumsum('angle'),
-              line_color='white', color='color', alpha=0.6, source=calls_made)
+              line_color='white', color='color', alpha=0.6, legend_field='index', source=calls_made)
     pie.axis.visible = False  # remove axes
     pie.grid.grid_line_color = None  # remove gridlines
     pie.title.text = 'Number of calls made\n(Total of ' + \
         str(int(calls_made['count'].sum())) + ')'
-
-    # add percent labels to wedges
-    percent = Label(x=calls_made.iloc[0]['label_coords_x'] - 0.1,
-                    y=calls_made.iloc[0]['label_coords_y'] - 0.1, text=label_text[0])
-    pie.add_layout(percent)
-    percent = Label(x=calls_made.iloc[1]['label_coords_x'] - 0.1,
-                    y=calls_made.iloc[1]['label_coords_y'] - 0.1, text=label_text[1])
-    pie.add_layout(percent)
-    percent = Label(x=calls_made.iloc[2]['label_coords_x'] + 0.12,
-                    y=calls_made.iloc[2]['label_coords_y'] - 0.1, text=label_text[2])
-    pie.add_layout(percent)
-
-    labels = LabelSet(x='label_coords_x', y='label_coords_y', text='index', source=ColumnDataSource(calls_made),
-                      render_mode='canvas')  # create wedge labels
-    pie.add_layout(labels)
+    pie.legend.background_fill_alpha = 0.4
 
     menu = Select(options=['Daily', 'Weekly', 'Monthly'],
                   value='Daily', title='Resample frequency')
