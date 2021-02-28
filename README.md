@@ -2,7 +2,7 @@
 
 ## Create an interactive dashboard of your call and text history
 
-To run, `cd` to inside the `texts-calls-dashboard` folder in the terminal and run the following:
+To run, `cd` to inside the `texts-calls-dashboard/src` folder in the terminal and run the following:
 
 ```shell
 bokeh serve --show dashboard.py
@@ -14,6 +14,6 @@ As of this writing, this program is very specific in terms of file compatibility
 
 1. Create demo gif
 2. Add option to switch between only total texts/calls per time and per person
-3. Make the text and call data files more straightforward, in terms of format and location<br>
+3. Add table of most used words
+4. Make the text and call data files more straightforward, in terms of format and location<br>
    (a) Allow for the possibility of multiple text data files, like for calls
-
