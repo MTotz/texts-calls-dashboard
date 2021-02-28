@@ -9,7 +9,7 @@ from bokeh.layouts import column, row
 ###########################################################
 # WORKING
 # To run application, open terminal, navigate to this directoy, and run the following:
-# bokeh serve --show Display_app.py
+# bokeh serve --show dashboard.py
 ###########################################################
 
 person1 = "John"
