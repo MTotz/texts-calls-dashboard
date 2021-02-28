@@ -8,7 +8,7 @@ To run, `cd` to inside the `texts-calls-dashboard` folder in the terminal and ru
 bokeh serve --show dashboard.py
 ```
 
-As of this writing, this program is very specific in terms of file compatibility. I wrote this to work with the specific format of the files that the backup app on my phone creates. For the texts data file the app creates an XML file, which I then convert to a CSV file using a third-party website; the calls data file I leave as an XML file. I'm not sure how common this format is among these texts/calls backup files.
+As of this writing, this program is very specific in terms of file compatibility. I wrote this to work with the specific format of the files that the backup app on my phone creates. For the texts data file the app creates an XML file, which I then convert to a CSV file using a third-party website; the calls data file I leave as an XML file. I'm not sure how common this format is across different devices and backup apps.
 
 ## To-do
 
