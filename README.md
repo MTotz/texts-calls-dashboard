@@ -2,7 +2,7 @@
 
 ## Create an interactive dashboard of your call and text history
 
-To run, cd to inside the texts-calls-dashboard folder in the terminal and run the following:
+To run, `cd` to inside the `texts-calls-dashboard` folder in the terminal and run the following:
 
 ```shell
 bokeh serve --show dashboard.py
