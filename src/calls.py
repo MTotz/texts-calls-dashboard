@@ -1,5 +1,4 @@
 import pandas as pd
-import sys  # to get file name from command line argument, assume only one argument, file name without extension
 # function converts seconds to days, hours:minutes:seconds
 from datetime import timedelta as delta
 import matplotlib.pyplot as plt
@@ -20,7 +19,7 @@ from texts import resample_interval_string
 
 person1 = "Mary"  # the name of the person who downloaded the call log
 person2 = "John"  # the name of your contact as it will appear in the dashboard
-person3 = "snooze monster"  # the name of person2 as listed in the call log
+person3 = person2  # the name of person2 as listed in the call log
 
 
 def merge_dataframes():
@@ -30,8 +29,7 @@ def merge_dataframes():
     Returns: The DataFrame containing the call logs of all XML files.
     """
 
-    path = '/Users/michael/Desktop/Stuffing/Python/Projects/TextsCalls/'
-    path = "data/"
+    path = "../data/"
 
     files = [f for f in listdir(path)]  # get files from folder
     xmls = [f for f in files if re.search('.xml', f)]  # get only xml files
@@ -71,13 +69,13 @@ def create_dataframe(file):
     # for each child in the xml file extract the relevant attributes
     for child in root:
         if child.get('contact_name') == person3:
-            number.append(child.get('number'))
+            # number.append(child.get('number'))
             date.append(child.get('readable_date'))
             duration.append(child.get('duration'))
             caller.append(child.get('type'))
 
-    labels = ['Date', 'Caller', 'Phone Number', 'Duration (s)']
-    cols = [date, caller, number, duration]
+    labels = ['Date', 'Caller', 'Duration (s)']
+    cols = [date, caller, duration]
     data = dict(list(zip(labels, cols)))
 
     return pd.DataFrame(data)
@@ -190,7 +188,7 @@ def plot_calls(df_merged, resample):
 
     line1.x_range = line2.x_range
 
-    calls_made = pd.DataFrame(df.iloc[:, 6:].sum())
+    calls_made = pd.DataFrame(df.iloc[:, 5:].sum())
     calls_made = calls_made.reset_index()
 
     calls_made = calls_made.rename(columns={0: 'count'})
