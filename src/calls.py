@@ -1,5 +1,4 @@
 import pandas as pd
-import sys  # to get file name from command line argument, assume only one argument, file name without extension
 # function converts seconds to days, hours:minutes:seconds
 from datetime import timedelta as delta
 import matplotlib.pyplot as plt
@@ -30,7 +29,6 @@ def merge_dataframes():
     Returns: The DataFrame containing the call logs of all XML files.
     """
 
-    path = '/Users/michael/Desktop/Stuffing/Python/Projects/TextsCalls/'
     path = "../data/"
 
     files = [f for f in listdir(path)]  # get files from folder
