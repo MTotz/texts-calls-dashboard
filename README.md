@@ -16,7 +16,7 @@ As of this writing, this program is very specific in terms of file compatibility
 
 ## To-do
 
-1. Create demo gif
+1. Speed up demo gif
 2. Add option to switch between only total texts/calls per time and per person
 3. Add table of most used words
 4. Create config file for variables containing contact names, and resample_interval_string function.
