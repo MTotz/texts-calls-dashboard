@@ -1,5 +1,7 @@
 # texts-calls-dashboard
 
+<img src="sample.gif" style="width:80%"/>
+
 ## Create an interactive dashboard of your call and text history
 
 To run, `cd` to inside the `texts-calls-dashboard/src` folder in the terminal and run the following:
