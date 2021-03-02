@@ -42,7 +42,7 @@ def text_messages(filename, resample):
     Puts all of the below functions together into one for convenience.
     """
 
-    df = create_text_dataframe(filename)
+    df = create_text_dataframe(filename)[::4]
     return text_message_plots(df, resample)
 
 
@@ -217,14 +217,16 @@ def text_message_plots(df, resample):
                    resample_strings[0],
                    tools='pan,box_zoom,reset', plot_width=plot_width, plot_height=plot_height,
                    y_range=(0, texts_per_time[person1].max() + 5))
-    texts_per_day_glyph = line1.line(x='Date', y=person1, source=source1,  # plot Person 1 texts in red
+    texts_per_time_glyph = line1.line(x='Date', y=person1, source=source1,  # plot Person 1 texts in red
                                      color='red', alpha=0.6, line_width=2, legend_label=person1)
     line1.line(x='Date', y=person2, source=source1,  # plot Person 2 texts in blue
                color='green', alpha=0.6, line_width=2, legend_label=person2)
     # line1.y_range = Range1d(start=0, end=600)#end=texts_per_time[person1].max() + 50)
     num_texts_sent_text = (
         'Average of ' + str(round(avg_texts_per_day, 1)) + ' texts sent per day.')
-    line1.title.text = num_texts_sent_text
+    line1.title.text = 'Average of ' + \
+        '{:1.2f}'.format(texts_per_time["Total"].mean()) + \
+        ' texts per ' + resample_strings[0]
 
     line1.extra_y_ranges = {'cumulative': Range1d(
         start=0, end=texts_per_time.iloc[-1, -1] + 2000)}
@@ -238,7 +240,7 @@ def text_message_plots(df, resample):
 
     hover_line1 = HoverTool(tooltips=[('Date', '@Date{%F}'), ('Texts sent by ' + person1, '@' + person1),
                                       ("Texts sent by " + person2, '@' + person2)],
-                            formatters={'@Date': 'datetime'}, renderers=[texts_per_day_glyph], mode="vline")
+                            formatters={'@Date': 'datetime'}, renderers=[texts_per_time_glyph], mode="vline")
     line1.add_tools(hover_line1)
 
     # create line plot of average words per text vs. date
@@ -284,13 +286,13 @@ def text_message_plots(df, resample):
     pie.wedge(x=0, y=1, radius=0.8,
               start_angle=cumsum('angle', include_zero=True), end_angle=cumsum('angle'),
               line_color='white', color='color', alpha=0.6, legend_field='index', source=total_texts)
-    pie.axis.visible = False  # remove axes
-    pie.grid.grid_line_color = None  # remove gridlines
+    pie.axis.visible = False # remove axes
+    pie.grid.grid_line_color = None # remove gridlines
     pie.title.text = 'Number of texts sent\n(Total of ' + \
         str(int(total_texts['count'].sum())) + ')'
     pie.legend.background_fill_alpha = 0.4
 
-    line1.x_range = line2.x_range  # link x axes of both line plots
+    line1.x_range = line2.x_range # link x axes of both line plots
 
     menu = Select(options=['Daily', 'Weekly', 'Monthly'],
                   value='Daily', title='Resampling frequency')
@@ -320,6 +322,9 @@ def text_message_plots(df, resample):
         # change back the title of the right cumulative
         cum_axis.axis_label = 'Cumulative number of texts'
         # ... axis, since the above callback changes it back to be the same as the left
+        line1.title.text = 'Average of ' + \
+            '{:1.2f}'.format(texts_per_time["Total"].mean()) + \
+            ' texts per ' + resample_strings[0]
 
         avg_text_length_text = (person1 + ': ' + str(round(avg_words_person1, 1)) + ' words per text.\t\t\t\t\t\t\t' +
                                 person2 + ': ' + str(round(avg_words_person2, 1)) + ' words per text.')
