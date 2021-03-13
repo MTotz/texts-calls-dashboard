@@ -16,11 +16,9 @@ As of this writing, this program is very specific in terms of file compatibility
 
 ## To-do
 
-1. Speed up demo gif
-2. Add option to switch between only total texts/calls per time and per person
-3. Add table of most used words
-4. Create config file for variables containing contact names, and resample_interval_string function.
-5. Make the text and call data files more straightforward, in terms of format and location
+1. Add option to switch between only total texts/calls per time and per person
+2. Create config file for variables containing contact names, and resample_interval_string function.
+3. Make the text and call data files more straightforward, in terms of format and location
    (a) Allow for the possibility of multiple text data files, like for calls
 
 ?. Add some HTML/CSS to spruce it up<br>
