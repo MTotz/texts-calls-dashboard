@@ -1,6 +1,6 @@
 # texts-calls-dashboard
 
-<img src="sample.gif" style="width:80%"/>
+<img src="sample1.gif" style="width:80%"/>
 
 ## Create an interactive dashboard of your call and text history
 
