@@ -218,7 +218,7 @@ def text_message_plots(df, resample):
                    tools='pan,box_zoom,reset', plot_width=plot_width, plot_height=plot_height,
                    y_range=(0, texts_per_time[person1].max() + 5))
     texts_per_time_glyph = line1.line(x='Date', y=person1, source=source1,  # plot Person 1 texts in red
-                                     color='red', alpha=0.6, line_width=2, legend_label=person1)
+                                      color='red', alpha=0.6, line_width=2, legend_label=person1)
     line1.line(x='Date', y=person2, source=source1,  # plot Person 2 texts in blue
                color='green', alpha=0.6, line_width=2, legend_label=person2)
     # line1.y_range = Range1d(start=0, end=600)#end=texts_per_time[person1].max() + 50)
@@ -286,13 +286,13 @@ def text_message_plots(df, resample):
     pie.wedge(x=0, y=1, radius=0.8,
               start_angle=cumsum('angle', include_zero=True), end_angle=cumsum('angle'),
               line_color='white', color='color', alpha=0.6, legend_field='index', source=total_texts)
-    pie.axis.visible = False # remove axes
-    pie.grid.grid_line_color = None # remove gridlines
+    pie.axis.visible = False  # remove axes
+    pie.grid.grid_line_color = None  # remove gridlines
     pie.title.text = 'Number of texts sent\n(Total of ' + \
         str(int(total_texts['count'].sum())) + ')'
     pie.legend.background_fill_alpha = 0.4
 
-    line1.x_range = line2.x_range # link x axes of both line plots
+    line1.x_range = line2.x_range  # link x axes of both line plots
 
     menu = Select(options=['Daily', 'Weekly', 'Monthly'],
                   value='Daily', title='Resampling frequency')
@@ -332,7 +332,6 @@ def text_message_plots(df, resample):
 
     menu.on_change('value', callback)
 
-    '''
     # table of n most common words
     # use second row and last column of subplots
     # NOTE: adding this table greatly slows down the creation of the dashboard
@@ -345,13 +344,13 @@ def text_message_plots(df, resample):
     common_words_source = ColumnDataSource(common_words_df)
 
     columns = [TableColumn(field=person1, title=person1),
-               TableColumn(field=person2, title=person2), ]
+               TableColumn(field=person2, title=person2)]
     common_words_table = DataTable(source=common_words_source, columns=columns, width=200, height=280,
                                    index_position=None, align='center')  # hides the index column in the table
 
     '''
 
-    '''
+    
     # transpose the common words to display as one column per person
     common_words_table = plt.subplot(grid[1, 0])
     cell_text = np.transpose([common_words_person1, common_words_person2])
@@ -373,8 +372,8 @@ def text_message_plots(df, resample):
     plt.show()
     '''
 
-    layout = column(row(line1, pie), row(line2, menu),
-                    row())  # create plot layout
+    layout = column(row(menu), row(line1, pie),
+                    row(line2, common_words_table))  # create plot layout
     panel = Panel(child=layout, title='Texts')
 
     return layout

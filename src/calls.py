@@ -251,7 +251,7 @@ def plot_calls(df_merged, resample):
 
     menu.on_change('value', callback)
 
-    layout = column(row(line1, pie), row(line2, menu))
+    layout = column(row(menu), row(line1, pie), row(line2))
     panel = Panel(child=layout, title='Calls')
 
     # output_file('calls.html')
