@@ -23,5 +23,5 @@ As of this writing, this program is very specific in terms of file compatibility
 5. Make the text and call data files more straightforward, in terms of format and location
    (a) Allow for the possibility of multiple text data files, like for calls
 
-?. Add some HTML/CSS to spruce it up
+?. Add some HTML/CSS to spruce it up<br>
 ?. Look into using Dash to make the dashboard
